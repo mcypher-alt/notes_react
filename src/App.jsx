@@ -7,9 +7,23 @@ export default function ToDoApp() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] =  useState('');
   const [searchValue, setSearchValue] = useState('');
+  const [sortBy, setSortBy] = useState('default');
+  const [isMenuOpen, setMenuOpen] = useState(false);
 
-  const filteredNotes = noteList.filter(note =>
+  const getSortedNotes = (notes) => {
+  if (sortBy === "date") {
+    return [...notes].sort((a, b) => b.id - a.id);
+  }
+  return notes;
+  }
+
+  const filteredNotes = (noteList) => {
+    return noteList.filter(note =>
     note.title.toLowerCase().includes(searchValue));
+  }
+
+  const filtered = filteredNotes(noteList);
+  const sorted = getSortedNotes(filtered);
 
   const renderList = (notes) => {
     if (notes.length === 0) {
@@ -37,27 +51,6 @@ export default function ToDoApp() {
           </p>)}
       </div>
       ));
-  };
-
-  const handleShow = () => {
-    return (
-      <>
-        <input
-            value={form.title}
-            type="text"
-            placeholder="Введите название"
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-          />
-          <input
-            value={form.description}
-            type="text"
-            placeholder="Введите текст заметки"
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-          <button onClick={handleAdd}>Добавить</button>
-          {error && <p className="text-red-500">{error}</p>}
-        </>
-    )
   };
 
   const handleDelete = (id) => {
@@ -97,20 +90,103 @@ export default function ToDoApp() {
       <h1 className='text-center text-white mt-2'>Заметки</h1>
       <div className='grow bg-white rounded-xl shadow-lg p-6 border border-gray-200'>
         <div>
-          <button onClick={() => setShowForm(!showForm)}>
-            {showForm ? "Назад" : "Добавить заметку"}
-          </button>
-          {showForm && handleShow()}
+          {!showForm && (
+            <button
+            className='bg-linear-to-br from-[#667eea] to-[#764ba2] text-white border-none py-3 px-6 rounded-[50px] text-[1rem] font-bold cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95 mb-4'
+            onClick={() => setShowForm(true)}
+            >
+            Добавить заметку
+            </button>
+          )}
+          {showForm && (
+            <div className='flex flex-col gap-2'>
+              <input
+                  className='p-2 border rounded'
+                  value={form.title}
+                  type="text"
+                  placeholder="Введите название"
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                />
+                <input
+                  className='p-2 border rounded'
+                  value={form.description}
+                  type="text"
+                  placeholder="Введите текст заметки"
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                />
+                <div className='flex'>
+                  {showForm && (
+                    <button
+                    onClick={() => setShowForm(false)}
+                    className='w-18 text-xs p-2 border rounded-xl text-white bg-red-600  hover:bg-red-700'
+                    >
+                      Назад
+                    </button>
+                  )}
+                  <button
+                  onClick={handleAdd}
+                  className='w-18 text-xs p-2 border rounded-xl text-white bg-green-600 hover:bg-green-700'
+                  >
+                    Добавить
+                  </button>
+                </div>
+                {error && <p className="text-red-500">{error}</p>}
+            </div>
+          )}
         </div>
-        <div className='mt-5 mb-5'>
-          <input className='rounded-xl border-2 border-purple-500'
-          value={searchValue}
-          type='text'
-          placeholder='Введите название заметки...'
-          onChange={(e) => setSearchValue(e.target.value)}
+
+        <div className='relative mt-5 mb-5 flex justify-between items-center'>
+          <input
+            className='rounded-xl border-2 border-purple-500 mr-4'
+            value={searchValue}
+            type='text'
+            placeholder='Введите название заметки...'
+            onChange={(e) => setSearchValue(e.target.value)}
           />
+          
+          <div className='relative'>
+            <button
+              className='bg-linear-to-br from-[#667eea] to-[#764ba2] text-white py-2 px-4 rounded-full whitespace-nowrap'
+              onClick={() => setMenuOpen(!isMenuOpen)}
+            >
+              Отсортировать
+            </button>
+            
+            {isMenuOpen && (
+              <div className='absolute right-0 top-full w-48 bg-white rounded-lg shadow-lg border z-10'>
+                <div className='py-2'>
+                  <p className='px-4 py-2 text-sm font-semibold text-gray-500 border-b'>
+                    Сортировка
+                  </p>
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setSortBy('default');
+                    }}
+                    className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                  >
+                    📅 По умолчанию
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setSortBy('date');
+                    }}
+                    className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                  >
+                    🔄 По дате
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">{renderList(filteredNotes)}</div>
+
+        <div
+        className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          {renderList(sorted)}
+        </div>
       </div>
       <footer className="h-25 text-white flex items-center justify-center">Подвал</footer>
     </div>
