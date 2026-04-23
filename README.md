@@ -1,18 +1,69 @@
-# React + Vite
+# 📝 Notes App (React + Tailwind)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Современное веб-приложение для создания и управления заметками с поддержкой темной темы и локального хранилища.
 
-Currently, two official plugins are available:
+🔗 **Демо:** [https://mcypher-alt.github.io/notes_react/](https://mcypher-alt.github.io/notes_react/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Основные возможности
 
-## React Compiler
+* **CRUD-функционал:** Создание и удаление заметок с подтверждением действия.
+* **Умный поиск:** Мгновенная фильтрация списка по названию заметки.
+* **Сортировка:** Возможность упорядочить записи по умолчанию или по дате добавления (по убыванию ID).
+* **Dark Mode:** Полноценная темная тема с сохранением предпочтений пользователя в `localStorage`.
+* **Persistence:** Все данные автоматически сохраняются в браузере и не пропадают после перезагрузки страницы.
+* **Адаптивность:** Сетка заметок подстраивается под любые размеры экрана (Mobile, Tablet, Desktop).
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## 🛠 Технологический стек
 
-Note: This will impact Vite dev & build performances.
+* **Frontend:** React (Hooks: `useState`, `useEffect`).
+* **Стилизация:** Tailwind CSS (включая кастомные градиенты и анимации).
+* **Сборка:** Vite.
+* **CI/CD:** GitHub Actions (автоматический деплой при пуше в ветку `master`).
 
-## Expanding the ESLint configuration
+## 💻 Локальная установка
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Клонируйте репозиторий:
+
+   ```bash
+   git clone [https://github.com/mcypher-alt/notes_react.git](https://github.com/mcypher-alt/notes_react.git)
+    ```
+
+2. Перейдите в папку проекта:
+
+   ```bash
+   cd notes_react
+   ```
+
+3. Установите зависимости:
+
+   ```bash
+   npm install
+   ```
+
+4. Запустите проект в режиме разработки:
+
+    ```bash
+    npm run dev
+    ```
+
+## Структура проекта
+
+```text
+notes_react/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          # Автоматизация деплоя на GitHub Pages
+├── src/
+│   ├── components/             # Твои UI-компоненты
+│   │   ├── addButton.jsx       # Кнопка открытия формы
+│   │   ├── addNoteForm.jsx     # Форма ввода новой заметки
+│   │   ├── newItem.jsx         # Карточка отдельной заметки
+│   │   └── toggleThemeButton.jsx # Переключатель тем
+│   ├── utils/
+│   │   └── sortAndFilter.js    # Логика обработки массивов
+│   ├── App.jsx                 # Главный компонент и стейт
+│   ├── main.jsx                # Точка входа в приложение
+│   └── index.css               # Глобальные стили и Tailwind
+├── package.json                # Конфиг проекта и зависимости
+├── vite.config.js              # Настройки сборщика Vite
+└── README.md                   # Описание твоего проекта
