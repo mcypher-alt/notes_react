@@ -79,7 +79,9 @@ export default function ToDoApp() {
   return (
     <div className='flex flex-col grow'>
       <h1 className='text-center text-white dark:text-gray-600 mt-2'>Заметки</h1>
-      <div className='grow bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 border border-gray-200 dark:border-gray-700'>
+      <div
+      className='grow bg-white dark:bg-gray-800 rounded-xl
+      shadow-lg dark:shadow-gray-900/50 p-6 border border-gray-200 dark:border-gray-700'>
         <div>
           {!showForm && (<AddButton onClick={() => setShowForm(true)} />)}
           {showForm && (
@@ -93,15 +95,15 @@ export default function ToDoApp() {
           )}
         </div>
 
-        <div className='relative mt-5 mb-5 flex justify-between items-center'>
+        <div className='relativemt-5 mb-5 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center'>
           <input
-            className='rounded-xl border-2 border-purple-500 mr-4 dark:text-gray-300'
+            className='w-full sm:w-64 rounded-xl border-2 border-purple-500 dark:text-gray-300 p-2'
             value={searchValue}
             type='text'
             placeholder='Введите название заметки...'
             onChange={(e) => setSearchValue(e.target.value)}
           />
-          <div className='relative'>
+          <div className='relative flex items-center justify-between sm:justify-end gap-3'>
             <ThemeToggle
             darkMode={darkMode}
             setDarkMode={setDarkMode}
