@@ -54,7 +54,7 @@
 
 body {
   margin: 0;
-  @apply font-sans min-h-screen bg-gradient-to-br from-indigo-500 to-purple-700 text-[#333];
+  @apply font-sans min-h-screen bg-linear-to-br from-indigo-500 to-purple-700 text-[#333];
 }
 
 #root {

@@ -1,4 +1,9 @@
 import { useEffect, useState } from 'react'
+import { getFilteredNotes, getSortedNotes } from './utils/sortAndFilter';
+import NoteItem from './components/newItem';
+import AddButton from './components/addButton';
+import AddNoteForm from './components/addNoteForm';
+import ThemeToggle from './components/toggleThemeButton';
 
 export default function ToDoApp() {
   const [noteList, setNoteList] = useState([]);
@@ -10,46 +15,39 @@ export default function ToDoApp() {
   const [sortBy, setSortBy] = useState('default');
   const [isMenuOpen, setMenuOpen] = useState(false);
 
-  const getSortedNotes = (notes) => {
-  if (sortBy === "date") {
-    return [...notes].sort((a, b) => b.id - a.id);
-  }
-  return notes;
-  }
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+    });
 
-  const filteredNotes = (noteList) => {
-    return noteList.filter(note =>
-    note.title.toLowerCase().includes(searchValue));
-  }
+  const filtered = getFilteredNotes(noteList, searchValue);
+  const sorted = getSortedNotes(filtered, sortBy);
 
-  const filtered = filteredNotes(noteList);
-  const sorted = getSortedNotes(filtered);
+  useEffect(() => {
+      const saved = localStorage.getItem('notes');
+      if (saved) {
+        setNoteList(JSON.parse(saved));
+      }
+      if (darkMode) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+  }
+    }, [darkMode]);
 
   const renderList = (notes) => {
     if (notes.length === 0) {
       return <p>Задач в списке нет. Добавьте первую!</p>;
     }
     return notes.map((note) => (
-      <div key={note.id} className="mb-3">
-        <div className="relative">
-          <button
-            onClick={() => setNoteId(noteId === note.id ? null : note.id)}
-            className="shadow-lg w-full text-left p-4 pr-16 bg-white border border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all"
-          >
-            <span className="font-medium text-gray-800">{note.title}</span>
-          </button>
-          <button
-            onClick={() => confirm("Действительно желаете удалить?") && handleDelete(note.id)}
-            className="absolute top-1/2 right-3 -translate-y-1/2 bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
-          >
-            Удалить
-          </button>
-        </div>
-        {noteId === note.id && (
-          <p className="p-4 pt-2 text-gray-600">
-            {note.description}
-          </p>)}
-      </div>
+      <NoteItem
+      note={note}
+      key={note.id}
+      isOpen={noteId === note.id}
+      onToggle={() => setNoteId(noteId === note.id ? null : note.id)}
+      onDelete={() => confirm('Вы действительно желаете удалить заметку?') && handleDelete(note.id)}
+      />
       ));
   };
 
@@ -78,84 +76,52 @@ export default function ToDoApp() {
     setShowForm(false);
   };
 
-  useEffect(() => {
-    const saved = localStorage.getItem('notes');
-    if (saved) {
-      setNoteList(JSON.parse(saved));
-    }
-  }, []);
-
   return (
     <div className='flex flex-col grow'>
-      <h1 className='text-center text-white mt-2'>Заметки</h1>
-      <div className='grow bg-white rounded-xl shadow-lg p-6 border border-gray-200'>
+      <h1 className='text-center text-white dark:text-gray-600 mt-2'>Заметки</h1>
+      <div className='grow bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-900/50 p-6 border border-gray-200 dark:border-gray-700'>
         <div>
-          {!showForm && (
-            <button
-            className='bg-linear-to-br from-[#667eea] to-[#764ba2] text-white border-none py-3 px-6 rounded-[50px] text-[1rem] font-bold cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95 mb-4'
-            onClick={() => setShowForm(true)}
-            >
-            Добавить заметку
-            </button>
-          )}
+          {!showForm && (<AddButton onClick={() => setShowForm(true)} />)}
           {showForm && (
-            <div className='flex flex-col gap-2'>
-              <input
-                  className='p-2 border rounded'
-                  value={form.title}
-                  type="text"
-                  placeholder="Введите название"
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                />
-                <input
-                  className='p-2 border rounded'
-                  value={form.description}
-                  type="text"
-                  placeholder="Введите текст заметки"
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                />
-                <div className='flex'>
-                  {showForm && (
-                    <button
-                    onClick={() => setShowForm(false)}
-                    className='w-18 text-xs p-2 border rounded-xl text-white bg-red-600  hover:bg-red-700'
-                    >
-                      Назад
-                    </button>
-                  )}
-                  <button
-                  onClick={handleAdd}
-                  className='w-18 text-xs p-2 border rounded-xl text-white bg-green-600 hover:bg-green-700'
-                  >
-                    Добавить
-                  </button>
-                </div>
-                {error && <p className="text-red-500">{error}</p>}
-            </div>
+            <AddNoteForm
+            form={form}
+            backToggle={() => setShowForm(false)}
+            onAdd={handleAdd}
+            error={error}
+            setForm={setForm}
+            />
           )}
         </div>
 
         <div className='relative mt-5 mb-5 flex justify-between items-center'>
           <input
-            className='rounded-xl border-2 border-purple-500 mr-4'
+            className='rounded-xl border-2 border-purple-500 mr-4 dark:text-gray-300'
             value={searchValue}
             type='text'
             placeholder='Введите название заметки...'
             onChange={(e) => setSearchValue(e.target.value)}
           />
-          
           <div className='relative'>
+            <ThemeToggle
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+            />
+
             <button
-              className='bg-linear-to-br from-[#667eea] to-[#764ba2] text-white py-2 px-4 rounded-full whitespace-nowrap'
+              className='bg-linear-to-br
+              from-[#667eea] to-[#764ba2] text-white py-2 px-4 rounded-full
+              whitespace-nowrap transition-all duration-200 hover:scale-105'
               onClick={() => setMenuOpen(!isMenuOpen)}
             >
               Отсортировать
             </button>
             
             {isMenuOpen && (
-              <div className='absolute right-0 top-full w-48 bg-white rounded-lg shadow-lg border z-10'>
+              <div className='absolute right-0 top-full w-48 bg-white dark:bg-gray-800
+              rounded-lg shadow-lg dark:shadow-gray-900/50 border z-10'>
                 <div className='py-2'>
-                  <p className='px-4 py-2 text-sm font-semibold text-gray-500 border-b'>
+                  <p className='px-4 py-2 text-sm font-semibold text-gray-700
+                  dark:text-gray-400 border-b'>
                     Сортировка
                   </p>
                   <button
@@ -163,7 +129,8 @@ export default function ToDoApp() {
                       setMenuOpen(false);
                       setSortBy('default');
                     }}
-                    className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                    className='w-full text-left px-4 py-2 text-sm
+                    text-gray-700 dark:text-gray-400 hover:bg-gray-400'
                   >
                     📅 По умолчанию
                   </button>
@@ -172,9 +139,10 @@ export default function ToDoApp() {
                       setMenuOpen(false);
                       setSortBy('date');
                     }}
-                    className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                    className='w-full text-left px-4 py-2 text-sm text-gray-700
+                    dark:text-gray-400 hover:bg-gray-400'
                   >
-                    🔄 По дате
+                    🔄 По дате(возрастанию)
                   </button>
                 </div>
               </div>
