@@ -95,7 +95,7 @@ export default function ToDoApp() {
           )}
         </div>
 
-        <div className='relativemt-5 mb-5 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center'>
+        <div className='relative mt-5 mb-5 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center'>
           <input
             className='w-full sm:w-64 rounded-xl border-2 border-purple-500 dark:text-gray-300 p-2'
             value={searchValue}

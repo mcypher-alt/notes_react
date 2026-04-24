@@ -5,14 +5,16 @@ export default function AddNoteForm({ form, setForm, backToggle, onAdd, error })
         className='p-2 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600'
         value={form.title}
         type="text"
-        placeholder="Введите название"
+        maxLength={30}
+        placeholder="Введите название(макс. символов 30)"
         onChange={(e) => setForm({ ...form, title: e.target.value })}
       />
       <input
         className='p-2 border rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600'
         value={form.description}
         type="text"
-        placeholder="Введите текст заметки"
+        maxLength={120}
+        placeholder="Введите текст заметки(макс. символов 120)"
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
       <div className='flex gap-2'>
